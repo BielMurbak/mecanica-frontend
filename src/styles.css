@@ -432,6 +432,16 @@
   border-color: var(--accent);
 }
 
+.field__input--no-spinner::-webkit-outer-spin-button,
+.field__input--no-spinner::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.field__input--no-spinner {
+  -moz-appearance: textfield;
+}
+
 .field__error {
   color: var(--destructive);
   font-size: 12px;

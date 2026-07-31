@@ -5,8 +5,11 @@ export function Drawer({ open, title, onClose, children }) {
   const closeRef = useRef(null)
 
   useEffect(() => {
+    if (open) closeRef.current?.focus()
+  }, [open])
+
+  useEffect(() => {
     if (!open) return
-    closeRef.current?.focus()
 
     function handleKey(e) {
       if (e.key === 'Escape') onClose()

@@ -178,9 +178,8 @@ export function ServicosPage() {
           <label className="field">
             <span className="field__label">Valor (R$)</span>
             <input
-              className="field__input mono"
               type="number"
-              step="0.01"
+              className="field__input field__input--no-spinner mono"
               min="0"
               value={form.valor}
               onChange={(e) => setForm({ ...form, valor: e.target.value })}
@@ -211,7 +210,6 @@ export function ServicosPage() {
             <span className="field__label">Duração estimada (dias)</span>
             <input
               className="field__input mono"
-              type="number"
               min="1"
               value={form.duracaoEstimadaDias}
               onChange={(e) => setForm({ ...form, duracaoEstimadaDias: e.target.value })}
