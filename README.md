@@ -21,20 +21,26 @@ Gera os arquivos estáticos em `dist/`.
 
 ## Build da imagem Docker (Nginx)
 
-A URL da API é embutida no bundle **no momento do build** (Vite), então é preciso saber o endereço do backend antes de gerar a imagem:
+A imagem já inclui um Nginx que serve o SPA e faz proxy de `/api/` para `http://backend:8080/api/` (ver `nginx.conf`). Por padrão, o build **não** embute nenhuma URL de API — o bundle chama caminhos relativos (`/api/...`) e deixa o Nginx resolver para o backend, então frontend e backend precisam estar na mesma rede Docker (ex.: mesmo `docker-compose.yml`, com o serviço do backend chamado `backend`):
 
 ```bash
-docker build -t mecanica-frontend --build-arg VITE_API_URL=http://<host-do-backend>:8080 .
+docker build -t mecanica-frontend .
 docker run -d --name mecanica-frontend -p 80:80 mecanica-frontend
 ```
 
-Use esse comando na VM do frontend, apontando `VITE_API_URL` para o IP/DNS da VM do backend. Se o IP/DNS mudar depois, é necessário rebuildar a imagem (a env var não é lida em runtime).
+Se preferir apontar o frontend direto para um backend em outro host (bypassando o proxy do Nginx), ainda é possível embutir uma URL absoluta no build — nesse caso o backend precisa liberar CORS para a origin do frontend (`CORS_ALLOWED_ORIGINS`) e expor a porta publicamente:
+
+```bash
+docker build -t mecanica-frontend --build-arg VITE_API_URL=http://<host-do-backend>:8080 .
+```
+
+A env var é lida **no momento do build** (Vite), não em runtime — mudou o endereço, precisa rebuildar.
 
 ## Variáveis de ambiente
 
 | Variável | Descrição | Default |
 |---|---|---|
-| `VITE_API_URL` | URL base da API do backend | `http://localhost:8080` |
+| `VITE_API_URL` | URL base da API do backend. Vazio = caminhos relativos via proxy do Nginx (recomendado) | `` (vazio, proxy via Nginx) |
 
 ## Login
 
