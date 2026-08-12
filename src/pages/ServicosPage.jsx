@@ -4,6 +4,7 @@ import { api } from '../api/client'
 import { Drawer } from '../components/Drawer'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { StatusChip, STATUS_OPTIONS } from '../components/StatusChip'
+import { Select } from '../components/Select'
 
 const EMPTY_FORM = {
   descricao: '',
@@ -20,6 +21,8 @@ export function ServicosPage() {
   const [servicos, setServicos] = useState([])
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState(null)
+
+  const [mecanicos, setMecanicos] = useState([])
 
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [editingId, setEditingId] = useState(null)
@@ -45,6 +48,7 @@ export function ServicosPage() {
 
   useEffect(() => {
     load()
+    api.get('/api/mecanicos').then(setMecanicos).catch(() => setMecanicos([]))
   }, [])
 
   function openCreate() {
@@ -190,10 +194,10 @@ export function ServicosPage() {
 
           <label className="field">
             <span className="field__label">Mecânico responsável</span>
-            <input
-              className="field__input"
+            <Select
               value={form.mecanico}
-              onChange={(e) => setForm({ ...form, mecanico: e.target.value })}
+              onChange={(value) => setForm({ ...form, mecanico: value })}
+              options={mecanicos.filter((m) => m.ativo).map((m) => ({ value: m.nome, label: m.nome }))}
             />
           </label>
 
@@ -218,17 +222,11 @@ export function ServicosPage() {
 
           <label className="field">
             <span className="field__label">Status</span>
-            <select
-              className="field__input"
+            <Select
               value={form.status}
-              onChange={(e) => setForm({ ...form, status: e.target.value })}
-            >
-              {STATUS_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
+              onChange={(value) => setForm({ ...form, status: value })}
+              options={STATUS_OPTIONS}
+            />
           </label>
 
           <div className="drawer__actions">
