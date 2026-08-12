@@ -432,6 +432,73 @@
   border-color: var(--accent);
 }
 
+.select {
+  position: relative;
+}
+
+.select__trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  text-align: left;
+  font: inherit;
+  color: var(--ink);
+}
+
+.select__placeholder {
+  color: var(--ink-muted);
+}
+
+.select__caret {
+  flex-shrink: 0;
+  color: var(--ink-muted);
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.select__trigger[aria-expanded='true'] .select__caret {
+  color: var(--accent);
+  transform: rotate(180deg);
+}
+
+.select__panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 10;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-card);
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.select__option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 9px 10px;
+  border-radius: var(--radius-sm);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.select__option:hover {
+  background: var(--bg);
+}
+
+.select__option--selected {
+  color: var(--accent);
+  font-weight: 500;
+}
+
 .field__input--no-spinner::-webkit-outer-spin-button,
 .field__input--no-spinner::-webkit-inner-spin-button {
   -webkit-appearance: none;
