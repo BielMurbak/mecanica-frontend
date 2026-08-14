@@ -131,9 +131,8 @@ jobs:
             cd /home/ubuntu/mecanica-frontend
             git fetch origin main
             git reset --hard origin/main
-            docker rm -f mecanica-frontend 2>/dev/null || true
             docker compose pull frontend
-            docker compose up -d frontend
+            docker compose up -d --force-recreate frontend
             docker image prune -f
 
       - name: Validar sucesso do deploy
