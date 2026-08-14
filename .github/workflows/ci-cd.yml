@@ -30,11 +30,52 @@ jobs:
       - name: Instalar dependencias
         run: npm ci
 
+      - name: Testes unitarios
+        run: npm run test:unit
+
+      - name: Testes de integracao
+        run: npm run test:integration
+
       - name: Lint (oxlint)
         run: npm run lint
 
       - name: Build (vite build)
         run: npm run build
+
+      - name: Definir chave de cache semanal (OWASP)
+        id: owasp-cache-key
+        run: echo "week=$(date +'%Y-%U')" >> "$GITHUB_OUTPUT"
+
+      - name: Cache do banco de dados NVD (OWASP Dependency-Check)
+        uses: actions/cache@v4
+        with:
+          path: ~/.dependency-check-data
+          key: owasp-dc-db-${{ steps.owasp-cache-key.outputs.week }}
+          restore-keys: owasp-dc-db-
+
+      - name: Baixar OWASP Dependency-Check CLI
+        run: |
+          curl -sL https://github.com/dependency-check/DependencyCheck/releases/download/v9.2.0/dependency-check-9.2.0-release.zip -o dependency-check.zip
+          unzip -q dependency-check.zip
+
+      - name: Validacao de dependencias (OWASP Dependency-Check)
+        continue-on-error: true
+        run: >
+          ./dependency-check/bin/dependency-check.sh
+          --project mecanica-frontend
+          --scan package-lock.json
+          --out target/dependency-check-report
+          --data ~/.dependency-check-data
+          --failOnCVSS 9
+          --format HTML
+          --nvdApiKey ${{ secrets.NVD_API_KEY }}
+
+      - name: Upload do relatorio (OWASP Dependency-Check)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-check-report
+          path: target/dependency-check-report
 
       - name: Upload do artefato (dist)
         uses: actions/upload-artifact@v4
