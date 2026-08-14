@@ -1,0 +1,13 @@
+services:
+  frontend:
+    image: ghcr.io/bielmurbak/mecanica-frontend:latest
+    build: .
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    networks:
+      - mecanica-net
+
+networks:
+  mecanica-net:
+    external: true
