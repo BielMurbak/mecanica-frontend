@@ -35,7 +35,7 @@ export function LoginPage() {
           <Wrench size={28} weight="fill" />
           <h1>Gestão de Mecânica</h1>
         </div>
-        <p className="login-card__subtitle">Acesse com seu usuário e senha</p>
+        <p className="login-card__subtitle">Acesse com seu login e senha</p>
 
         <label className="field">
           <span className="field__label">Usuário</span>
