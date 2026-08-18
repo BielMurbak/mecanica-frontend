@@ -33,7 +33,7 @@ export function LoginPage() {
       <form className="login-card" onSubmit={handleSubmit}>
         <div className="login-card__brand">
           <Wrench size={28} weight="fill" />
-          <h1>Gestão de Mecânica</h1>
+          <h1>Mecânica</h1>
         </div>
         <p className="login-card__subtitle">Acesse com seu login e senha</p>
 
