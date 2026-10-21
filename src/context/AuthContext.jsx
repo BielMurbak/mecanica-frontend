@@ -19,16 +19,14 @@ export function AuthProvider({ children }) {
   }, [])
 
   async function login(username, password) {
+    // O login vai sem o header Authorization: com credenciais erradas o Spring responderia
+    // 401 + WWW-Authenticate e o navegador abriria o popup nativo de Basic Auth.
+    clearCredentials()
+    const data = await api.post('/api/auth/login', { username, password })
     setCredentials(username, password)
-    try {
-      const data = await api.post('/api/auth/login', { username, password })
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ username, password, role: data.role }))
-      setUser({ username: data.username, role: data.role })
-      return data
-    } catch (err) {
-      clearCredentials()
-      throw err
-    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ username, password, role: data.role }))
+    setUser({ username: data.username, role: data.role })
+    return data
   }
 
   function logout() {

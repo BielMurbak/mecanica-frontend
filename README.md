@@ -45,3 +45,19 @@ A env var é lida **no momento do build** (Vite), não em runtime — mudou o en
 ## Login
 
 Use as credenciais do admin seedado pelo backend (`admin` / `admin123` por padrão). O frontend envia usuário/senha em cada requisição via HTTP Basic Auth.
+
+## Kubernetes com Minikube (Mensal 2)
+
+A aplicação roda no Minikube junto com o backend e o PostgreSQL. Os manifestos (`k8s/`) e o passo a passo completo estão no repositório [mecanica-backend](https://github.com/BielMurbak/mecanica-backend) (seção "Kubernetes com Minikube").
+
+O que este repositório contribui:
+
+- `Dockerfile`: build do React (Vite) e imagem final `nginx:alpine`.
+- `default.conf.template`: configuração do nginx como template. `BACKEND_UPSTREAM` define o backend (padrão `backend:8080`; no cluster, `backend.mecanica.svc.cluster.local:8080`). O DNS é detectado do ambiente, o `Host` é repassado com a porta e o header `X-Served-By` mostra qual Pod respondeu (balanceamento).
+
+Imagem usada no cluster:
+
+```bash
+docker build -t mecanica-frontend:v1 .
+minikube image load mecanica-frontend:v1
+```

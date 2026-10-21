@@ -1,0 +1,36 @@
+server {
+    listen 80;
+    server_name _;
+
+    root /usr/share/nginx/html;
+    index index.html;
+
+    # Nome do Pod/host que atendeu a requisição (demonstra o balanceamento)
+    add_header X-Served-By $hostname always;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # DNS do ambiente (Docker: 127.0.0.11 | Kubernetes: kube-dns), detectado
+    # de /etc/resolv.conf pelo entrypoint da imagem nginx.
+    # O nginx não usa "search domains": em Kubernetes BACKEND_UPSTREAM deve ser FQDN.
+    resolver ${NGINX_LOCAL_RESOLVERS} valid=10s;
+
+    location /api/ {
+        set $backend_upstream ${BACKEND_UPSTREAM};
+        # sem URI no proxy_pass: o nginx repassa o caminho original (/api/...) intacto
+        proxy_pass http://$backend_upstream;
+
+        # $http_host mantém a porta (ex.: localhost:8080). Com $host o Spring via Origin != Host
+        # e tratava a chamada do navegador como CORS, devolvendo 401.
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    location = /health {
+        return 200 "ok";
+        add_header Content-Type text/plain;
+    }
+}
